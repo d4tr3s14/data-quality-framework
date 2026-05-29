@@ -1,5 +1,11 @@
 # Data Quality & Migration Validation Framework
 
+[![CI](https://github.com/d4tr3s14/data-quality-framework/actions/workflows/ci.yml/badge.svg)](https://github.com/d4tr3s14/data-quality-framework/actions/workflows/ci.yml)
+![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)
+![BDD](https://img.shields.io/badge/BDD-behave-1f6feb.svg)
+![Reporting](https://img.shields.io/badge/reporting-Allure%20%2B%20PDF-orange.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 A **BDD-based data testing framework** for validating data pipelines — both
 functional/business rules and **on-premise → cloud (Google Cloud Platform) data
 migrations**. It produces human-readable **PDF evidence reports** for product
@@ -192,6 +198,15 @@ Copy `.env.example` to `.env`. The demo needs no changes. Key variables:
 - **Python 3.10+**, **behave** (BDD), **pandas**
 - **DuckDB** (local demo engine), **Google BigQuery** + **Oracle** (production connectors)
 - **ReportLab** (PDF), **Allure** (reporting)
+
+## Related project
+
+This framework validates the fictional **"Veridian"** platform at the
+**data/warehouse layer**. Its companion,
+[**api-testing-framework**](https://github.com/d4tr3s14/api-testing-framework),
+validates the same platform at the **API layer** (REST, auth, contract testing
+with pytest + JSON Schema). Together they demonstrate end-to-end quality
+coverage — from the data that lands in the warehouse to the API that exposes it.
 
 ## Notes
 
