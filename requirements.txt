@@ -1,0 +1,9 @@
+# Núcleo del framework + demo reproducible (DuckDB).
+behave~=1.2.6
+allure-behave~=2.14.0
+duckdb~=1.1
+pandas~=2.2
+reportlab~=4.2
+python-dotenv~=1.0
+
+# Conectores de producción (BigQuery / Oracle): ver requirements-prod.txt

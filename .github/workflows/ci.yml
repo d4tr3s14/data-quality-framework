@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate synthetic dataset
+        run: python data/generate_synthetic_data.py
+
+      - name: Run BDD validation suite
+        run: behave -f allure_behave.formatter:AllureFormatter -o allure-results
+
+      - name: Upload Allure results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results
+
+      - name: Upload PDF evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdf-evidence
+          path: reports/pdf

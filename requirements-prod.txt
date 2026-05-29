@@ -1,0 +1,8 @@
+# Dependencias adicionales para los conectores de producción.
+# No son necesarias para el demo (que corre sobre DuckDB).
+-r requirements.txt
+
+google-cloud-bigquery~=3.19
+db-dtypes~=1.2          # conversión de tipos BigQuery -> pandas
+oracledb~=2.0
+requests~=2.31          # integración con gestión de pruebas (Jira)

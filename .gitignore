@@ -1,0 +1,33 @@
+# --- Secretos: jamás versionar credenciales ---
+.env
+*.json
+!**/launch.json
+service-account*.json
+gcp_keys/
+oracle_keys/
+
+# --- Entornos virtuales ---
+.venv/
+venv/
+env/
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# --- Datos sintéticos generados (recréalos con el generador) ---
+data/*.duckdb
+
+# --- Salidas de ejecución (regenerables) ---
+reports/
+allure-results/
+allure-report/
+execution.log
+*.log
+
+# --- Editores / SO ---
+.vscode/
+.idea/
+.DS_Store
