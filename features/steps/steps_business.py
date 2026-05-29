@@ -4,7 +4,6 @@ Demuestra una validación funcional no trivial: recalcular el saldo en pesos
 desde los datos de origen (saldo en cuotas x valor cuota del último día del
 periodo) y comparar contra el dato publicado en la capa de producto.
 """
-import allure
 import numpy as np
 import pandas as pd
 from behave import when, then
@@ -79,8 +78,6 @@ def step_validate_calculated_balance(context, table, id_cliente, periodo):
     # 3. Comparar calculado vs real.
     comparacion = pd.merge(df_calc, df_real, on="tipo_fondo", how="outer").fillna(0)
     context.attach_df_list.append(("Comparación calculado vs producto", comparacion))
-    allure.attach(comparacion.to_string(index=False), name="Reconciliación de saldos",
-                  attachment_type=allure.attachment_type.TEXT)
 
     coinciden = np.isclose(
         comparacion['saldo_pesos_calculado'], comparacion['saldo_pesos_real'], atol=1.0

@@ -1,5 +1,4 @@
 """Steps comunes: conexión al warehouse y validación de esquema."""
-import allure
 import pandas as pd
 from behave import given, when, then
 
@@ -30,9 +29,12 @@ def step_validate_schema(context):
 
     actual_df = context.wh.get_schema(context.table_under_test)
 
-    context.query = f"-- Esquema de {context.table_under_test} (information_schema.columns)"
+    context.query = (
+        "SELECT column_name, data_type\n"
+        "FROM information_schema.columns\n"
+        f"WHERE table_name = '{context.table_under_test.split('.')[-1]}';"
+    )
     context.query_result_df = actual_df
-    context.query_result_str = actual_df.to_string(index=False)
 
     assert not actual_df.empty, (
         f"No se obtuvo esquema para '{context.table_under_test}'. "
@@ -44,5 +46,3 @@ def step_validate_schema(context):
         actual_df.sort_values(by='column_name').reset_index(drop=True),
         check_like=True,
     )
-    allure.attach(actual_df.to_string(index=False), name="Esquema real",
-                  attachment_type=allure.attachment_type.TEXT)

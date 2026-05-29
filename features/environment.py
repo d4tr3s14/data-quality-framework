@@ -40,7 +40,24 @@ def before_scenario(context, scenario):
     print(f"\nIniciando escenario: {scenario.name}")
 
 
+def _attach_query(sql):
+    """Adjunta una query a Allure como texto plano (SQL)."""
+    allure.attach(sql, name="Query (SQL)", attachment_type=allure.attachment_type.TEXT)
+
+
+def _attach_table(df, name):
+    """Adjunta un DataFrame a Allure como CSV -> Allure lo renderiza como grilla."""
+    allure.attach(df.to_csv(index=False), name=name,
+                  attachment_type=allure.attachment_type.CSV)
+
+
 def after_step(context, step):
+    """Captura toda la evidencia del paso una sola vez.
+
+    Este es el ÚNICO lugar que crea adjuntos en Allure (los steps no llaman
+    a ``allure.attach`` directamente), evitando duplicación. Las queries van
+    como texto SQL y los resultados como CSV (grilla tipo planilla).
+    """
     evidence = {
         'keyword': step.keyword,
         'name': step.name,
@@ -56,29 +73,27 @@ def after_step(context, step):
     if hasattr(context, 'query') and hasattr(context, 'query_result_df'):
         evidence['query'] = context.query
         evidence['result_df'] = context.query_result_df
-        if hasattr(context, 'query_result_str'):
-            allure.attach(context.query, name="Query",
-                          attachment_type=allure.attachment_type.TEXT)
-            allure.attach(context.query_result_str, name="Resultado",
-                          attachment_type=allure.attachment_type.TEXT)
-            del context.query_result_str
+        _attach_query(context.query)
+        _attach_table(context.query_result_df, "Resultado")
         del context.query
         del context.query_result_df
+        if hasattr(context, 'query_result_str'):
+            del context.query_result_str
 
     if hasattr(context, 'error_sample_df'):
         evidence['error_query'] = context.error_sample_query
         evidence['error_sample_df'] = context.error_sample_df
-        if hasattr(context, 'error_sample_result'):
-            allure.attach(context.error_sample_query, name="Query (muestra de error)",
-                          attachment_type=allure.attachment_type.TEXT)
-            allure.attach(context.error_sample_result, name="Resultado (muestra de error)",
-                          attachment_type=allure.attachment_type.TEXT)
-            del context.error_sample_result
+        _attach_query(context.error_sample_query)
+        _attach_table(context.error_sample_df, "Muestra de datos con errores")
         del context.error_sample_query
         del context.error_sample_df
+        if hasattr(context, 'error_sample_result'):
+            del context.error_sample_result
 
     if getattr(context, 'attach_df_list', None):
         evidence['attached_dfs'] = list(context.attach_df_list)
+        for title, df in context.attach_df_list:
+            _attach_table(df, title)
         context.attach_df_list.clear()
 
     context.evidence_list.append(evidence)

@@ -19,8 +19,8 @@ from reportlab.lib.pagesizes import A4, landscape
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.platypus import (
-    BaseDocTemplate, Frame, HRFlowable, Image, PageBreak, PageTemplate,
-    Paragraph, Spacer, Table, TableStyle,
+    BaseDocTemplate, Frame, HRFlowable, Image, KeepTogether,
+    PageTemplate, Paragraph, Spacer, Table, TableStyle,
 )
 
 # --- Estilos ---
@@ -128,43 +128,52 @@ def generate_evidence_pdf(scenario_name, evidence_list, feature_filename):
     ]
 
     for evidence in evidence_list:
+        # Cada paso se arma como un bloque y se envuelve en KeepTogether, para
+        # que el título, la query y su tabla de resultado no queden separados
+        # entre páginas.
         status_style = styles['Status_Passed'] if evidence['status'] == 'passed' else styles['Status_Failed']
-        story.append(Paragraph(f"{evidence['keyword']} {evidence['name']}", styles['StepTitle']))
-        story.append(Paragraph(f"Resultado: {evidence['status'].upper()}", status_style))
-        story.append(Spacer(1, 0.2 * inch))
+        block = [
+            Paragraph(f"{evidence['keyword']} {evidence['name']}", styles['StepTitle']),
+            Paragraph(f"Resultado: {evidence['status'].upper()}", status_style),
+            Spacer(1, 0.2 * inch),
+        ]
 
         if 'error_message' in evidence:
-            story.append(Paragraph("Mensaje de Error:", styles['H3_Custom']))
-            story.append(Paragraph(evidence['error_message'].replace('\n', '<br/>'), styles['Error_Code']))
+            block.append(Paragraph("Mensaje de Error:", styles['H3_Custom']))
+            block.append(Paragraph(evidence['error_message'].replace('\n', '<br/>'), styles['Error_Code']))
 
         if 'query' in evidence:
-            story.append(Paragraph("Query Ejecutada:", styles['H3_Custom']))
-            story.append(Paragraph(evidence['query'], styles['Code_Custom']))
+            block.append(Paragraph("Query ejecutada:", styles['H3_Custom']))
+            block.append(Paragraph(evidence['query'].replace('\n', '<br/>'), styles['Code_Custom']))
 
         if 'result_df' in evidence:
-            story.append(Paragraph("Resultado de la Query:", styles['H3_Custom']))
-            story.extend(_render_dataframe_as_table(evidence['result_df'], doc.width))
+            block.append(Spacer(1, 0.1 * inch))
+            block.append(Paragraph("Resultado:", styles['H3_Custom']))
+            block.extend(_render_dataframe_as_table(evidence['result_df'], doc.width))
 
         if 'error_sample_df' in evidence:
-            story.append(Paragraph("Muestra de Datos con Errores:", styles['H3_Custom']))
-            story.extend(_render_dataframe_as_table(evidence['error_sample_df'], doc.width))
+            block.append(Spacer(1, 0.1 * inch))
+            block.append(Paragraph("Muestra de datos con errores:", styles['H3_Custom']))
+            block.extend(_render_dataframe_as_table(evidence['error_sample_df'], doc.width))
 
         if 'attached_dfs' in evidence:
             for title, df in evidence['attached_dfs']:
-                story.append(Paragraph(title, styles['H3_Custom']))
-                story.extend(_render_dataframe_as_table(df, doc.width))
-
-        story.append(Spacer(1, 0.3 * inch))
-        story.append(HRFlowable(width="100%", thickness=1.5, color=colors.HexColor('#CBD5E0'),
-                                spaceBefore=10, spaceAfter=10))
-        story.append(Spacer(1, 0.3 * inch))
+                block.append(Spacer(1, 0.1 * inch))
+                block.append(Paragraph(title, styles['H3_Custom']))
+                block.extend(_render_dataframe_as_table(df, doc.width))
 
         if 'data_filepath' in evidence:
-            data_link_path = evidence['data_filepath']
-            link = (f'<a href="file:///{os.path.abspath(data_link_path)}" color="blue">'
+            link = (f'<a href="file:///{os.path.abspath(evidence["data_filepath"])}" color="blue">'
                     f'<u>Descargar datos completos en CSV</u></a>')
-            story.append(Spacer(1, 0.1 * inch))
-            story.append(Paragraph(link, styles['Normal']))
+            block.append(Spacer(1, 0.1 * inch))
+            block.append(Paragraph(link, styles['Normal']))
+
+        block.append(Spacer(1, 0.2 * inch))
+        block.append(HRFlowable(width="100%", thickness=1.5, color=colors.HexColor('#CBD5E0'),
+                                spaceBefore=8, spaceAfter=8))
+        block.append(Spacer(1, 0.2 * inch))
+
+        story.append(KeepTogether(block))
 
     doc.build(story)
     print(f"PDF de evidencia generado en: {pdf_path}")
