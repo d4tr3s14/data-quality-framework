@@ -79,26 +79,60 @@ local DuckDB demo to production BigQuery is just `DB_BACKEND=bigquery`.
 
 ## Quickstart
 
+### Prerequisites
+
+- Python 3.10+
+- (Optional, for the Allure dashboard) [Allure CLI](https://allurereport.org/docs/install/) —
+  e.g. `npm install -g allure-commandline`
+
+### 1. Set up the environment
+
 ```bash
-# 1. Create and activate a virtual environment (Python 3.10+)
 python -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
+# Windows (PowerShell):
+.venv\Scripts\Activate.ps1
+# Linux / macOS:
+source .venv/bin/activate
 
-# 2. Install dependencies
 pip install -r requirements.txt
+```
 
-# 3. Generate the synthetic dataset (creates data/veridian_demo.duckdb)
+### 2. Run the demo (one command)
+
+The helper script generates the synthetic dataset, runs the full validation
+suite with Allure output, and opens the Allure dashboard:
+
+**Windows (PowerShell):**
+
+```powershell
+.\scripts\run_demo.ps1
+```
+
+> If you get an execution-policy error, allow scripts for the current session
+> first: `Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned`
+
+**Linux / macOS:**
+
+```bash
+./scripts/run_demo.sh
+```
+
+### Or run the steps manually
+
+```bash
+# Generate the synthetic dataset (creates data/veridian_demo.duckdb)
 python data/generate_synthetic_data.py
 
-# 4. Run the full validation suite
+# Run the full validation suite
 behave
 
-# 5. (Optional) Run with Allure results, then open the dashboard
+# (Optional) Run with Allure results, then open the dashboard
 behave -f allure_behave.formatter:AllureFormatter -o allure-results
 allure serve allure-results
 ```
 
-PDF evidence is written to `reports/pdf/<feature>/<scenario>.pdf`.
+PDF evidence is written to `reports/pdf/<feature>/<scenario>.pdf`, and the Allure
+dashboard opens automatically when you use the demo script.
 
 ## Sample evidence report
 
@@ -134,6 +168,9 @@ data-quality-framework/
 │   └── test_management.py       # Optional Jira/AgileTest integration (no-op by default)
 ├── data/
 │   └── generate_synthetic_data.py   # Deterministic synthetic data generator
+├── scripts/
+│   ├── run_demo.ps1             # One-command demo (Windows / PowerShell)
+│   └── run_demo.sh              # One-command demo (Linux / macOS)
 ├── requirements.txt             # Demo dependencies
 ├── requirements-prod.txt        # + production connectors
 ├── .env.example                 # Configuration template
