@@ -2,12 +2,6 @@
 $ErrorActionPreference = "Stop"
 Set-Location (Join-Path $PSScriptRoot "..")
 
-# Asegurar que el directorio global de npm esté disponible en esta sesión
-$npmBin = "$env:APPDATA\npm"
-if (Test-Path $npmBin) {
-    $env:PATH = "$npmBin;$env:PATH"
-}
-
 # 1. Generar datos sintéticos
 Write-Host "`n[1/3] Generando datos sinteticos..." -ForegroundColor Cyan
 python data/generate_synthetic_data.py
@@ -19,15 +13,25 @@ behave -f allure_behave.formatter:AllureFormatter -o allure-results
 # 3. Abrir el dashboard de Allure
 Write-Host "`n[3/3] Abriendo dashboard de Allure..." -ForegroundColor Cyan
 
-$allureExe = Get-Command allure -ErrorAction SilentlyContinue
-if ($allureExe) {
-    allure serve allure-results
+# Localizar allure.cmd (instalado via npm). Probar PATH y ubicaciones conocidas.
+$allureCmd = $null
+$candidates = @(
+    "$env:APPDATA\npm\allure.cmd",
+    "$env:ProgramData\chocolatey\bin\allure.cmd",
+    "$env:USERPROFILE\scoop\shims\allure.cmd"
+)
+foreach ($c in $candidates) {
+    if (Test-Path $c) { $allureCmd = $c; break }
+}
+
+if ($allureCmd) {
+    # Invocar vía cmd.exe: evita problemas del perfil de PowerShell con el
+    # operador & sobre archivos .cmd, y maneja rutas con espacios.
+    & cmd.exe /d /s /c """$allureCmd"" serve allure-results"
 } else {
-    # Fallback: generar reporte estático y abrir en el navegador
-    Write-Host "Generando reporte estatico..." -ForegroundColor Yellow
-    & "$npmBin\allure.cmd" generate allure-results --clean -o allure-report
-    Start-Process "allure-report\index.html"
-    Write-Host "Reporte abierto en el navegador." -ForegroundColor Green
+    Write-Host "`nAllure CLI no se encontro. Instalalo con:" -ForegroundColor Yellow
+    Write-Host "  npm install -g allure-commandline" -ForegroundColor White
+    Write-Host "Luego vuelve a ejecutar este script." -ForegroundColor White
 }
 
 Write-Host "`nPDFs de evidencia en: reports\pdf\" -ForegroundColor Green
