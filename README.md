@@ -4,6 +4,7 @@
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue.svg)
 ![BDD](https://img.shields.io/badge/BDD-behave-1f6feb.svg)
 ![Reporting](https://img.shields.io/badge/reporting-Allure%20%2B%20PDF-orange.svg)
+[![Allure Report](https://img.shields.io/badge/Allure-live%20report-fa4d56?logo=allure)](https://d4tr3s14.github.io/data-quality-framework/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 A **BDD-based data testing framework** for validating data pipelines — both

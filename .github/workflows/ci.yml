@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
   pull_request:
-    branches: [main]
+    branches: [main, master]
 
 jobs:
   validate:
@@ -40,3 +40,39 @@ jobs:
         with:
           name: pdf-evidence
           path: reports/pdf
+
+  # ---------------------------------------------------------------------
+  # Publica el reporte Allure navegable en GitHub Pages (solo push a main).
+  # ---------------------------------------------------------------------
+  publish-report:
+    name: Publish Allure report
+    needs: validate
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download Allure results
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results
+
+      - name: Restore Allure history
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Build Allure report (con histórico)
+        run: |
+          npm install -g allure-commandline
+          if [ -d gh-pages/history ]; then cp -r gh-pages/history allure-results/; fi
+          allure generate allure-results -o allure-report --clean
+
+      - name: Publish to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: allure-report
