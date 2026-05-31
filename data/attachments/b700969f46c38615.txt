@@ -1,0 +1,7 @@
+
+        SELECT id_cuenta, COUNT(1) AS qty
+        FROM product.account_balances
+        WHERE 1=1 AND periodo = 202507
+        GROUP BY id_cuenta
+        HAVING COUNT(1) > 1
+    

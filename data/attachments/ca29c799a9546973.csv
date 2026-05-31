@@ -1,0 +1,9 @@
+column_name,data_type
+periodo,INTEGER
+id_cliente,INTEGER
+id_cuenta,INTEGER
+tipo_producto,VARCHAR
+tipo_fondo,VARCHAR
+saldo_cuotas,DOUBLE
+fec_apertura,DATE
+fecha_proceso_dt,DATE

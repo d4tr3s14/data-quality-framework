@@ -1,0 +1,10 @@
+
+        WITH duplicados AS (
+            SELECT periodo,id_cliente,tipo_fondo, COUNT(*) AS cnt
+            FROM product.fund_balance_pesos
+            WHERE 1=1 AND periodo = 202507
+            GROUP BY periodo,id_cliente,tipo_fondo
+            HAVING COUNT(*) > 1
+        )
+        SELECT COUNT(*) AS grupos_duplicados FROM duplicados
+    

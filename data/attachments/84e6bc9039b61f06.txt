@@ -1,0 +1,10 @@
+
+        WITH ultimo_dia AS (
+            SELECT MAX(fec_valor) AS max_fecha
+            FROM curated.quote_values_daily WHERE periodo = 202507
+        )
+        SELECT tipo_fondo, val_cuota
+        FROM curated.quote_values_daily
+        WHERE periodo = 202507 AND fec_valor = (SELECT max_fecha FROM ultimo_dia)
+        ORDER BY tipo_fondo
+    

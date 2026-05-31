@@ -1,0 +1,7 @@
+
+        SELECT id_cliente, tipo_fondo, SUM(saldo_cuotas) AS saldo_cuotas
+        FROM curated.account_balances_standard
+        WHERE id_cliente = 7 AND periodo = 202507
+        GROUP BY id_cliente, tipo_fondo
+        ORDER BY tipo_fondo
+    

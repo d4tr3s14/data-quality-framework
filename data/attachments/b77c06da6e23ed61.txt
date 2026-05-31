@@ -1,0 +1,7 @@
+
+        SELECT COUNT(*) AS registros_no_numericos
+        FROM product.account_balances
+        WHERE NOT regexp_full_match(CAST(id_cliente AS VARCHAR), '[0-9]+')
+          AND id_cliente IS NOT NULL
+          AND periodo = 202507
+    

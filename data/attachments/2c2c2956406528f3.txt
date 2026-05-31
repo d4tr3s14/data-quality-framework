@@ -1,0 +1,7 @@
+
+        SELECT COUNT(1) AS registros_formato_invalido
+        FROM product.account_balances
+        WHERE NOT regexp_full_match(CAST(fec_apertura AS VARCHAR), '\d{4}-\d{2}-\d{2}')
+          AND fec_apertura IS NOT NULL
+          AND periodo = 202507
+    

@@ -1,0 +1,11 @@
+
+        SELECT COUNT(1) AS total
+        FROM curated.account_balances_standard
+        WHERE 1=1  AND periodo = 202507
+    
+-- vs --
+
+        SELECT COUNT(1) AS total
+        FROM product.account_balances
+        WHERE 1=1  AND periodo = 202507
+    

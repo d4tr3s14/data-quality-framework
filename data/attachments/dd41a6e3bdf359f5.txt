@@ -1,0 +1,6 @@
+
+        SELECT tipo_fondo, saldo_pesos AS saldo_pesos_real
+        FROM product.fund_balance_pesos
+        WHERE id_cliente = 13 AND periodo = 202507
+        ORDER BY tipo_fondo
+    

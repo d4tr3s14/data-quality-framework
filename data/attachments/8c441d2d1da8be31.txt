@@ -1,0 +1,6 @@
+
+        SELECT COUNT(1) AS null_count
+        FROM product.account_balances
+        WHERE (periodo IS NULL OR id_cliente IS NULL OR id_cuenta IS NULL OR saldo_cuotas IS NULL)
+        AND periodo = 202507
+    

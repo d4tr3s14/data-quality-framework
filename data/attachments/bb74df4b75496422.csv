@@ -1,0 +1,6 @@
+column_name,data_type
+periodo,INTEGER
+id_cliente,INTEGER
+tipo_fondo,VARCHAR
+saldo_pesos,DOUBLE
+distr_porcentaje,DOUBLE
