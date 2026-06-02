@@ -7,6 +7,9 @@
 [![Allure Report](https://img.shields.io/badge/Allure-live%20report-fa4d56?logo=allure)](https://d4tr3s14.github.io/data-quality-framework/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
+> 📘 ¿Primera vez o perfil junior? Lee la **[Guía detallada paso a paso](docs/GUIA.md)**
+> (glosario, para qué sirve cada herramienta, ejecución local y CI).
+
 A **BDD-based data testing framework** for validating data pipelines — both
 functional/business rules and **on-premise → cloud (Google Cloud Platform) data
 migrations**. It produces human-readable **PDF evidence reports** for product
