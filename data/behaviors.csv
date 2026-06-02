@@ -1,5 +1,5 @@
 "BROKEN","EPIC","FAILED","FEATURE","PASSED","SKIPPED","STORY","UNKNOWN"
-"0","","0","Calidad de datos en la capa de producto","5","0","","0"
-"0","","0","Reglas de negocio - cálculo de saldos","5","0","","0"
 "0","","0","Reconciliación de migración entre capas","2","0","","0"
+"0","","0","Reglas de negocio - cálculo de saldos","5","0","","0"
 "0","","0","Validación de esquemas de tablas","2","0","","0"
+"0","","0","Calidad de datos en la capa de producto","5","0","","0"
